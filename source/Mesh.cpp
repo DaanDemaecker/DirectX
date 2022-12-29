@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Mesh.h"
 #include "Effect.h"
+#include "Texture.h"
 
 namespace dae
 {
@@ -8,7 +9,7 @@ namespace dae
 		:m_pEffect{new Effect{pDevice, L"./Resources/PosCol3D.fx"}}
 	{
 		//Create Vertex Layout
-		static constexpr uint32_t numElements{ 2 };
+		static constexpr uint32_t numElements{ 4 };
 		D3D11_INPUT_ELEMENT_DESC vertexDesc[numElements]{};
 
 		vertexDesc[0].SemanticName = "POSITION";
@@ -16,10 +17,20 @@ namespace dae
 		vertexDesc[0].AlignedByteOffset = 0;
 		vertexDesc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 
-		vertexDesc[1].SemanticName = "COLOR";
+		vertexDesc[1].SemanticName = "NORMAL";
 		vertexDesc[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 		vertexDesc[1].AlignedByteOffset = 12;
 		vertexDesc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+
+		vertexDesc[2].SemanticName = "TANGENT";
+		vertexDesc[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+		vertexDesc[2].AlignedByteOffset = 24;
+		vertexDesc[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+
+		vertexDesc[3].SemanticName = "TEXCOORD";
+		vertexDesc[3].Format = DXGI_FORMAT_R32G32_FLOAT;
+		vertexDesc[3].AlignedByteOffset = 36;
+		vertexDesc[3].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		
 		//Create Input Layout
 		D3DX11_PASS_DESC passDesc{};
@@ -95,5 +106,35 @@ namespace dae
 			m_pEffect->GetTechnique()->GetPassByIndex(p)->Apply(0, pDeviceContext);
 			pDeviceContext->DrawIndexed(m_NumIndices, 0, 0);
 		}
+	}
+
+	void Mesh::SetMatrices(const Matrix& wvpmatrix, const Matrix& worldMatrix, const Matrix& viewinverse)
+	{
+		m_pEffect->SetMatrices(wvpmatrix, worldMatrix, viewinverse);
+	}
+
+	void Mesh::SetDiffuseMap(Texture* pDiffuseTexture)
+	{
+		m_pEffect->SetDiffuseMap(pDiffuseTexture);
+	}
+
+	void Mesh::SetGlossmap(Texture* pGlossMap)
+	{
+		m_pEffect->SetGlossmap(pGlossMap);
+	}
+
+	void Mesh::SetNormalMap(Texture* pNormalMap)
+	{
+		m_pEffect->SetNormalMap(pNormalMap);
+	}
+
+	void Mesh::SetSpecularMap(Texture* pSpecularMap)
+	{
+		m_pEffect->SetSpecularMap(pSpecularMap);
+	}
+
+	void Mesh::ToggleFilter(FilterState filter)
+	{
+		m_pEffect->ToggleFilter(filter);
 	}
 }

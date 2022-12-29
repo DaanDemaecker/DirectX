@@ -1,4 +1,5 @@
 #pragma once
+#include "Camera.h"
 
 struct SDL_Window;
 struct SDL_Surface;
@@ -6,6 +7,7 @@ struct SDL_Surface;
 namespace dae
 {
 	class Mesh;
+	class Texture;
 
 	class Renderer final
 	{
@@ -21,8 +23,12 @@ namespace dae
 		void Update(const Timer* pTimer);
 		void Render() const;
 
+		void ToggleFilterState();
+
 	private:
 		SDL_Window* m_pWindow{};
+
+		FilterState m_CurrentFilterState;
 
 		int m_Width{};
 		int m_Height{};
@@ -30,6 +36,16 @@ namespace dae
 		bool m_IsInitialized{ false };
 
 		Mesh* m_pMesh{};
+
+		Matrix m_WorldMatrix{};
+
+		Texture* m_pDiffuseTexture;
+		Texture* m_pGlossMap;
+		Texture* m_pNormalMap;
+		Texture* m_pSpecularMap;
+
+		float m_AspectRatio{};
+		Camera m_Camera{};
 
 		ID3D11Device* m_pDevice;
 		ID3D11DeviceContext* m_pDeviceContext;

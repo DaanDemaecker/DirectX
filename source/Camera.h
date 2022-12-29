@@ -1,10 +1,11 @@
 #pragma once
+#include "pch.h"
+#include "Math.h"
+#include "Timer.h"
+
 #include <cassert>
 #include <SDL_keyboard.h>
 #include <SDL_mouse.h>
-
-#include "Math.h"
-#include "Timer.h"
 
 namespace dae
 {
@@ -34,7 +35,7 @@ namespace dae
 		Vector3 right{Vector3::UnitX};
 
 		float cameraSpeed{ 10.f };
-		float angularSpeed{ .5f };
+		float angularSpeed{ 5.f };
 
 		float totalPitch{};
 		float totalYaw{};
@@ -54,7 +55,7 @@ namespace dae
 			aspectRatio = _aspectRatio;
 		}
 
-		void CalculateViewMatrix()
+		Matrix CalculateViewMatrix()
 		{
 			//TODO W1
 			//ONB => invViewMatrix
@@ -73,6 +74,7 @@ namespace dae
 
 			viewMatrix = invViewMatrix.Inverse();
 
+			return viewMatrix;
 			//ViewMatrix => Matrix::CreateLookAtLH(...) [not implemented yet]
 			//DirectX Implementation => https://learn.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixlookatlh
 		}
@@ -87,7 +89,7 @@ namespace dae
 			projectionMatrix = Matrix::CreatePerspectiveFovLH(fov, aspectRatio, nearPlane, farPlane);
 		}
 
-		void Update(Timer* pTimer)
+		void Update(const Timer* pTimer)
 		{
 			const float deltaTime = pTimer->GetElapsed();
 
@@ -126,12 +128,6 @@ namespace dae
 			//Update Matrices
 			CalculateViewMatrix();
 			CalculateProjectionMatrix(); //Try to optimize this - should only be called once or when fov/aspectRatio changes
-		}
-
-
-		bool IsOutsideFrustum(const Vector4& vertex)const
-		{
-			return (vertex.x < -1.0f || vertex.x > 1.0f || vertex.y < -1.0f || vertex.y > 1.0f);
 		}
 	};
 }

@@ -3,11 +3,14 @@
 namespace dae
 {
 	class Effect;
+	class Texture;
 
 	struct Vertex
 	{
 		Vector3 position;
-		ColorRGB color;
+		Vector3 normal;
+		Vector3 tangent;
+		Vector2 uv;
 	};
 
 	class Mesh final
@@ -24,6 +27,14 @@ namespace dae
 		Mesh(Mesh&& rhs) = delete;
 
 		void Render(ID3D11DeviceContext* pDeviceContext) const;
+
+		void SetMatrices(const Matrix& wvpmatrix, const Matrix& worldMatrix, const Matrix& viewinverse);
+		void SetDiffuseMap(Texture* pDiffuseTexture);
+		void SetGlossmap(Texture* pGlossMap);
+		void SetNormalMap(Texture* pNormalMap);
+		void SetSpecularMap(Texture* pSpecularMap);
+
+		void ToggleFilter(FilterState filter);
 
 	private:
 		Effect* m_pEffect;

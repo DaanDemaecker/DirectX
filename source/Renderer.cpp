@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Renderer.h"
 #include "Mesh.h"
+#include "Texture.h"
+#include "Utils.h"
 
 namespace dae {
 
@@ -9,6 +11,12 @@ namespace dae {
 	{
 		//Initialize
 		SDL_GetWindowSize(pWindow, &m_Width, &m_Height);
+
+		//calculate aspect ratio
+		m_AspectRatio = static_cast<float>(m_Width) / m_Height;
+
+		//Initialize Camera
+		m_Camera.Initialize(45.f, { .0f,.0f, -20.f }, m_AspectRatio);
 
 		//Initialize DirectX pipeline
 		const HRESULT result = InitializeDirectX();
@@ -24,15 +32,17 @@ namespace dae {
 
 
 		//Create some data for our mesh
-		std::vector<Vertex> vertices{
-			{{0.f, .5f, .5f}, {1.f, 0.f, 0.f}},
-			{{.5f, -.5f, .5f}, {0.f, 0.f, 1.f}},
-			{{-.5f, -.5f, .5f}, {0.f, 1.f, 0.f}}
-		};
 
-		std::vector<uint32_t> indices{ 0,1,2 };
+		std::vector<Vertex> vertices{};
+		std::vector<uint32_t> indices{};
+		Utils::ParseOBJ("resources/Vehicle.obj", vertices, indices);
 		
 		m_pMesh = new Mesh{ m_pDevice, vertices, indices };
+
+		m_pDiffuseTexture = Texture::LoadFromFile("Resources/vehicle_diffuse.png", m_pDevice);
+		m_pMesh->SetDiffuseMap(m_pDiffuseTexture);
+
+
 
 	}
 
@@ -76,11 +86,20 @@ namespace dae {
 		}
 
 		delete m_pMesh;
+		delete m_pDiffuseTexture;
+		delete m_pGlossMap;
+		delete m_pNormalMap;
+		delete m_pSpecularMap;
 	}
 
 	void Renderer::Update(const Timer* pTimer)
 	{
+		m_Camera.Update(pTimer);
 
+		const float rotationSpeed = 1.f;
+		m_WorldMatrix = Matrix::CreateRotationY(rotationSpeed * pTimer->GetElapsed()) * m_WorldMatrix;
+
+		m_pMesh->SetMatrices(m_WorldMatrix * m_Camera.viewMatrix * m_Camera.projectionMatrix, m_WorldMatrix, m_Camera.invViewMatrix);
 	}
 
 
@@ -100,6 +119,29 @@ namespace dae {
 
 		//3. PRESENT BACKBUFFER (SWAP)
 		m_pSwapChain->Present(0, 0);
+	}
+
+	void Renderer::ToggleFilterState()
+	{
+		m_CurrentFilterState = static_cast<FilterState>((int(m_CurrentFilterState) + 1) % 3);
+
+		switch (m_CurrentFilterState)
+		{
+		case FilterState::Point:
+			std::cout << "SAMPLER_STATE = POINT\n";
+			break;
+		case FilterState::Linear:
+			std::cout << "SAMPLER_STATE = LINEAR\n";
+			break;
+		case FilterState::Anisotropic:
+			std::cout << "SAMPLER_STATE = ANISOTROPIC\n";
+			break;
+		default:
+			break;
+		}
+
+		m_pMesh->ToggleFilter(m_CurrentFilterState);
+
 	}
 
 	HRESULT Renderer::InitializeDirectX()
@@ -213,5 +255,6 @@ namespace dae {
 		m_pDeviceContext->RSSetViewports(1, &viewport);
 
 		return result;
+
 	}
 }
