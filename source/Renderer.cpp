@@ -30,20 +30,35 @@ namespace dae {
 			std::cout << "DirectX initialization failed!\n";
 		}
 
+		LoadMeshes();
+	}
 
+	void Renderer::LoadMeshes()
+	{
 		//Create some data for our mesh
-
 		std::vector<Vertex> vertices{};
 		std::vector<uint32_t> indices{};
 		Utils::ParseOBJ("resources/Vehicle.obj", vertices, indices);
+
+		m_pVehicleMesh = new Mesh{ m_pDevice, vertices, indices, EffectType::Shaded };
+
+		m_pDiffuseTextureVehicle = Texture::LoadFromFile("Resources/vehicle_diffuse.png", m_pDevice);
+		m_pGlossMap = Texture::LoadFromFile("Resources/vehicle_gloss.png", m_pDevice);
+		m_pNormalMap = Texture::LoadFromFile("Resources/vehicle_normal.png", m_pDevice);
+		m_pSpecularMap = Texture::LoadFromFile("Resources/vehicle_specular.png", m_pDevice);
+
+		m_pVehicleMesh->SetDiffuseMap(m_pDiffuseTextureVehicle);
+		m_pVehicleMesh->SetGlossmap(m_pGlossMap);
+		m_pVehicleMesh->SetNormalMap(m_pNormalMap);
+		m_pVehicleMesh->SetSpecularMap(m_pSpecularMap);
+
+
+		Utils::ParseOBJ("resources/fireFX.obj", vertices, indices);
+
+		m_pFireMesh = new Mesh{ m_pDevice, vertices, indices, EffectType::Transparent };
+		m_pDiffuseTextureFire = Texture::LoadFromFile("Resources/fireFX_diffuse.png", m_pDevice);
 		
-		m_pMesh = new Mesh{ m_pDevice, vertices, indices };
-
-		m_pDiffuseTexture = Texture::LoadFromFile("Resources/vehicle_diffuse.png", m_pDevice);
-		m_pMesh->SetDiffuseMap(m_pDiffuseTexture);
-
-
-
+		m_pFireMesh->SetDiffuseMap(m_pDiffuseTextureFire);
 	}
 
 	Renderer::~Renderer()
@@ -85,11 +100,14 @@ namespace dae {
 			m_pDevice->Release();
 		}
 
-		delete m_pMesh;
-		delete m_pDiffuseTexture;
+		delete m_pVehicleMesh;
+		delete m_pDiffuseTextureVehicle;
 		delete m_pGlossMap;
 		delete m_pNormalMap;
 		delete m_pSpecularMap;
+
+		delete m_pFireMesh;
+		delete m_pDiffuseTextureFire;
 	}
 
 	void Renderer::Update(const Timer* pTimer)
@@ -97,9 +115,11 @@ namespace dae {
 		m_Camera.Update(pTimer);
 
 		const float rotationSpeed = 1.f;
-		m_WorldMatrix = Matrix::CreateRotationY(rotationSpeed * pTimer->GetElapsed()) * m_WorldMatrix;
+		//m_WorldMatrix = Matrix::CreateRotationY(rotationSpeed * pTimer->GetElapsed()) * m_WorldMatrix;
 
-		m_pMesh->SetMatrices(m_WorldMatrix * m_Camera.viewMatrix * m_Camera.projectionMatrix, m_WorldMatrix, m_Camera.invViewMatrix);
+		m_pVehicleMesh->SetMatrices(m_WorldMatrix * m_Camera.viewMatrix * m_Camera.projectionMatrix, m_WorldMatrix, m_Camera.invViewMatrix);
+		
+		m_pFireMesh->SetMatrices(m_WorldMatrix * m_Camera.viewMatrix * m_Camera.projectionMatrix, m_WorldMatrix, m_Camera.invViewMatrix);
 	}
 
 
@@ -115,7 +135,8 @@ namespace dae {
 
 		//2. SET PIPELINE + INVOKE DRAWCALLS (= RENDER)
 		//...
-		m_pMesh->Render(m_pDeviceContext);
+		m_pVehicleMesh->Render(m_pDeviceContext);
+		m_pFireMesh->Render(m_pDeviceContext);
 
 		//3. PRESENT BACKBUFFER (SWAP)
 		m_pSwapChain->Present(0, 0);
@@ -140,7 +161,8 @@ namespace dae {
 			break;
 		}
 
-		m_pMesh->ToggleFilter(m_CurrentFilterState);
+		m_pVehicleMesh->ToggleFilter(m_CurrentFilterState);
+		m_pFireMesh->ToggleFilter(m_CurrentFilterState);
 
 	}
 
@@ -257,4 +279,5 @@ namespace dae {
 		return result;
 
 	}
+	
 }

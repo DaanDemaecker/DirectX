@@ -4,13 +4,13 @@ namespace dae
 {
 	class Texture;
 
-	class Effect final
+	class Effect
 	{
 	public:
 		Effect() = delete;
 		explicit Effect(ID3D11Device* pDevice, const std::wstring& assetFile);
 
-		~Effect();
+		virtual ~Effect();
 		
 		Effect(Effect& rhs) = delete;
 		Effect(Effect&& rhs) = delete;
@@ -22,13 +22,14 @@ namespace dae
 
 		void SetMatrices(const Matrix& wvpmatrix, const Matrix& worldMatrix, const Matrix& viewinverse);
 		void SetDiffuseMap(Texture* pDiffuseTexture);
-		void SetGlossmap(Texture* pGlossMap);
-		void SetNormalMap(Texture* pNormalMap);
-		void SetSpecularMap(Texture* pSpecularMap);
+
+		virtual void SetGlossmap(Texture* pGlossMap){};
+		virtual void SetNormalMap(Texture* pNormalMap){};
+		virtual void SetSpecularMap(Texture* pSpecularMap){};
 
 		void ToggleFilter(FilterState filter);
 
-	private:
+	protected:
 		ID3DX11Effect* m_pEffect{};
 		ID3DX11EffectTechnique* m_pTechnique{};
 
@@ -44,9 +45,7 @@ namespace dae
 
 
 		ID3DX11EffectShaderResourceVariable* m_pDiffuseMapVariable;
-		ID3DX11EffectShaderResourceVariable* m_pGlossMapVariable;
-		ID3DX11EffectShaderResourceVariable* m_pNormalMapVariable;
-		ID3DX11EffectShaderResourceVariable* m_pSpecularMapVariable;
+		
 
 		ID3DX11Effect* LoadEffect(ID3D11Device* pDevice, const std::wstring& assetFile);
 	};

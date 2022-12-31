@@ -52,6 +52,12 @@
     <ClInclude Include="Utils.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="EffectTransparent.h">
+      <Filter>DataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectShaded.h">
+      <Filter>DataTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -79,6 +85,12 @@
       <Filter>DataTypes</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
+      <Filter>DataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectShaded.cpp">
+      <Filter>DataTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectTransparent.cpp">
       <Filter>DataTypes</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,13 +1,26 @@
 #include "pch.h"
 #include "Mesh.h"
 #include "Effect.h"
+#include "EffectShaded.h"
+#include "EffectTransparent.h"
 #include "Texture.h"
 
 namespace dae
 {
-	dae::Mesh::Mesh(ID3D11Device* pDevice, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
-		:m_pEffect{new Effect{pDevice, L"./Resources/PosCol3D.fx"}}
+	dae::Mesh::Mesh(ID3D11Device* pDevice, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, EffectType type)
 	{
+		switch (type)
+		{
+		case EffectType::Shaded:
+			m_pEffect = new EffectShaded{ pDevice, L"./Resources/PosTex3D.fx" };
+			break;
+		case EffectType::Transparent:
+			m_pEffect = new EffectTransparent{ pDevice, L"./Resources/PosTransparent3D.fx" };
+			break;
+		default:
+			break;
+		}
+
 		//Create Vertex Layout
 		static constexpr uint32_t numElements{ 4 };
 		D3D11_INPUT_ELEMENT_DESC vertexDesc[numElements]{};

@@ -36,18 +36,6 @@ namespace dae
 			std::wcout << L"m_pDiffuseMapVariable not valid\n";
 		}
 
-		m_pGlossMapVariable = m_pEffect->GetVariableByName("gGlossinessMap")->AsShaderResource();
-		if (!m_pGlossMapVariable->IsValid())
-		{
-			std::wcout << L"m_pGlossMapVariable is not valid \n";
-		}
-
-		m_pNormalMapVariable = m_pEffect->GetVariableByName("gNormalMap")->AsShaderResource();
-		if (!m_pNormalMapVariable->IsValid())
-		{
-			std::wcout << L"m_pNormalMapVariable is not valid \n";
-		}
-
 		m_pSamplerVariable = m_pEffect->GetVariableByName("gSamPoint")->AsSampler();
 		if (!m_pSamplerVariable->IsValid())
 		{
@@ -96,24 +84,6 @@ namespace dae
 	{
 		if (m_pDiffuseMapVariable)
 			m_pDiffuseMapVariable->SetResource(pDiffuseTexture->GetResource());
-	}
-
-	void Effect::SetGlossmap(Texture* pGlossMap)
-	{
-		if (m_pGlossMapVariable)
-			m_pGlossMapVariable->SetResource(pGlossMap->GetResource());
-	}
-
-	void Effect::SetNormalMap(Texture* pNormalMap)
-	{
-		if (m_pNormalMapVariable)
-			m_pNormalMapVariable->SetResource(pNormalMap->GetResource());
-	}
-
-	void Effect::SetSpecularMap(Texture* pSpecularMap)
-	{
-		if (m_pSpecularMapVariable)
-			m_pSpecularMapVariable->SetResource(pSpecularMap->GetResource());
 	}
 
 	void Effect::ToggleFilter(FilterState filter)

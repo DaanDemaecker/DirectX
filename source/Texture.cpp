@@ -38,6 +38,11 @@ namespace dae
 
 		hr = pDevice->CreateShaderResourceView(m_pResource, &SRVDesc, &m_pSRV);
 
+		if (FAILED(hr))
+		{
+			std::cout << "failed to load texture from file \n";
+		}
+
 		SDL_FreeSurface(pSurface);
 	}
 

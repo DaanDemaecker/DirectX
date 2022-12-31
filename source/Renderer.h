@@ -35,14 +35,18 @@ namespace dae
 
 		bool m_IsInitialized{ false };
 
-		Mesh* m_pMesh{};
+		Mesh* m_pVehicleMesh{};
+
+		Mesh* m_pFireMesh{};
 
 		Matrix m_WorldMatrix{};
 
-		Texture* m_pDiffuseTexture;
+		Texture* m_pDiffuseTextureVehicle;
 		Texture* m_pGlossMap;
 		Texture* m_pNormalMap;
 		Texture* m_pSpecularMap;
+
+		Texture* m_pDiffuseTextureFire;
 
 		float m_AspectRatio{};
 		Camera m_Camera{};
@@ -61,5 +65,8 @@ namespace dae
 		//DIRECTX
 		HRESULT InitializeDirectX();
 		//...
+
+
+		void LoadMeshes();
 	};
 }

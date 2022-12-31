@@ -17,7 +17,7 @@ namespace dae
 	{
 	public:
 		Mesh() = delete;
-		Mesh(ID3D11Device* pDevice, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indicess);
+		Mesh(ID3D11Device* pDevice, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indicess, EffectType type);
 
 		~Mesh();
 

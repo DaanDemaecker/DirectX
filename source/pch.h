@@ -23,11 +23,15 @@
 #include "Timer.h"
 #include "Math.h"
 
-
-
 enum class FilterState
 {
 	Point,
 	Linear,
 	Anisotropic
+};
+
+enum class EffectType
+{
+	Shaded,
+	Transparent
 };
