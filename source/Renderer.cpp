@@ -115,7 +115,7 @@ namespace dae {
 		m_Camera.Update(pTimer);
 
 		const float rotationSpeed = 1.f;
-		//m_WorldMatrix = Matrix::CreateRotationY(rotationSpeed * pTimer->GetElapsed()) * m_WorldMatrix;
+		m_WorldMatrix = Matrix::CreateRotationY(rotationSpeed * pTimer->GetElapsed()) * m_WorldMatrix;
 
 		m_pVehicleMesh->SetMatrices(m_WorldMatrix * m_Camera.viewMatrix * m_Camera.projectionMatrix, m_WorldMatrix, m_Camera.invViewMatrix);
 		
